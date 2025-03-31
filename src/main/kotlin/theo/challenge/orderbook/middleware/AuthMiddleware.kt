@@ -26,4 +26,13 @@ object AuthMiddleware {
             ctx.next()
         }
     }
+
+    //    JWT validation
+    //
+    //    private val jwtVerifier = JWT
+    //        .require(Algorithm.HMAC256("super-secret-jwt-key"))
+    //        .build()
+    //
+    //    private fun verifyJwt(token: String): DecodedJWT =
+    //        jwtVerifier.verify(token)
 }

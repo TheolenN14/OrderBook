@@ -32,11 +32,11 @@ object SignatureMiddleware {
         }
     }
 
-//    private fun hmac(data: String): String {
-//        val hmacKey = SecretKeySpec(SECRET.toByteArray(), "HmacSHA256")
-//        val mac = Mac.getInstance("HmacSHA256").apply { init(hmacKey) }
-//        return Base64.getEncoder().encodeToString(mac.doFinal(data.toByteArray()))
-//    }
+    //    private fun hmac(data: String): String {
+    //        val hmacKey = SecretKeySpec(SECRET.toByteArray(), "HmacSHA256")
+    //        val mac = Mac.getInstance("HmacSHA256").apply { init(hmacKey) }
+    //        return Base64.getEncoder().encodeToString(mac.doFinal(data.toByteArray()))
+    //    }
 
     private fun RoutingContext.failJson(status: Int, message: String) {
         log.warn("Signature failure: $message")

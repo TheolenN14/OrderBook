@@ -12,34 +12,42 @@ class OrderRepository {
         val book = buyOrders.computeIfAbsent(order.currencyPair) {
             TreeMap(Collections.reverseOrder()) // Bid = Highest first
         }
-        book.computeIfAbsent(order.price) { mutableListOf() }.add(order)
+        val list = book.computeIfAbsent(order.price) { mutableListOf() }
+        list.removeIf { it.orderId == order.orderId }
+        list.add(order)
     }
 
     fun addSellOrder(order: Order) {
         val book = sellOrders.computeIfAbsent(order.currencyPair) {
             TreeMap() // Ask = Lowest first
         }
-        book.computeIfAbsent(order.price) { mutableListOf() }.add(order)
+        val list = book.computeIfAbsent(order.price) { mutableListOf() }
+        list.removeIf { it.orderId == order.orderId }
+        list.add(order)
     }
 
+    @Deprecated("removeBuyOrders")
     fun removeBuyOrder(order: Order) {
         val book = buyOrders[order.currencyPair] ?: return
-        book[order.price]?.remove(order)
-        if (book[order.price]?.isEmpty() == true) book.remove(order.price)
+        val list = book[order.price] ?: return
+        list.removeIf { it.orderId == order.orderId }
+        if (list.isEmpty()) book.remove(order.price)
     }
 
+    @Deprecated("removeSellOrders")
     fun removeSellOrder(order: Order) {
         val book = sellOrders[order.currencyPair] ?: return
-        book[order.price]?.remove(order)
-        if (book[order.price]?.isEmpty() == true) book.remove(order.price)
+        val list = book[order.price] ?: return
+        list.removeIf { it.orderId == order.orderId }
+        if (list.isEmpty()) book.remove(order.price)
     }
 
     // Match engine
     fun getBuyOrderMap(currencyPair: String): NavigableMap<Double, MutableList<Order>> =
-        buyOrders[currencyPair] ?: TreeMap(Collections.reverseOrder())
+        buyOrders.computeIfAbsent(currencyPair) {  TreeMap(Collections.reverseOrder())}
 
     fun getSellOrderMap(currencyPair: String): NavigableMap<Double, MutableList<Order>> =
-        sellOrders[currencyPair] ?: TreeMap()
+        sellOrders.computeIfAbsent(currencyPair) { TreeMap()}
 
     // API views
     fun getBuyOrders(currencyPair: String): List<Order> =
@@ -47,4 +55,10 @@ class OrderRepository {
 
     fun getSellOrders(currencyPair: String): List<Order> =
         sellOrders[currencyPair]?.values?.flatten() ?: emptyList()
+
+    // *Potential TestHelper
+    fun clear() {
+        buyOrders.clear()
+        sellOrders.clear()
+    }
 }
