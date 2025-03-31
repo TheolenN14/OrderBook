@@ -3,10 +3,10 @@
 This is a Kotlin + Vert.x implementation of an in-memory order book backend service. It supports placing and matching limit orders, viewing open orders, and retrieving trade history.
 
 ### ⚙ How to Run
-1. Ensure you have **JDK 21** or higher.
+1. Ensure you have **JDK 17** or higher.
 2. Clone the project:
 ```bash
-git clone <your-repo-url>
+git clone <valr-assessment-url>
 cd orderbookservice
 ```
 3. Import into IntelliJ IDEA:
@@ -27,23 +27,31 @@ cd orderbookservice
 | GET    | `/v1/orderbook`        | View open orders                 |
 | GET    | `/v1/trades`           | View recent trade history        |
 
-> All endpoints require an `Authorization: Bearer secret-token` header.
-> POST endpoints require an `X-Signature: HMAC256`
-> GET endpoints requires 'currencyPair' parameter ..?currencyPar=..
+- All endpoints require an `Authorization: Bearer secret-token` header.
+- POST endpoints require an `X-Signature: HMAC256` as ${price+currencyPair+quantity}
+- GET endpoints requires 'currencyPair' parameter ..?currencyPar=..
 
+### 🟩  Trade Websocket
+
+This service supports **real-time streaming of matched trades**
+
+| Endpoint              | Method | Description                       |
+|-----------------------|--------|-----------------------------------|
+| `/ws/trades`          | WS     | Stream trades in real-time       |
 ---
 
 ## ✅ UAT Checklist
 
 ### UAT Scenarios
 
-| Scenario                              | Result         |
-|---------------------------------------|----------------|
-| Submit valid BUY order                | ✅ Pass         |
-| Submit valid SELL order               | ✅ Pass         |
-| Partial order match                   | ✅ Pass         |
-| Full order match                      | ✅ Pass         |
-| View order book with active orders    | ✅ Pass         |
-| View trade history                    | ✅ Pass         |
-| Auth failure (no token)               | ✅ Pass         |
-| Auth success (valid token)            | ✅ Pass         |
+| Scenario                           | Result     |
+|------------------------------------|------------|
+| Submit valid BUY order             | ✅ Pass     |
+| Submit valid SELL order            | ✅ Pass     |
+| Partial order match                | ✅ Pass     |
+| Full order match                   | ✅ Pass     |
+| View order book with active orders | ✅ Pass     |
+| View trade history                 | ✅ Pass     |
+| Auth and signature success         | ✅ Pass     |
+| Server error handling              | ✅ Pass     |
+| Websocket updates                  | ✅ Pass     |                
