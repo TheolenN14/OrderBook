@@ -20,10 +20,8 @@ object AuthMiddleware {
                         mapOf(
                             "status" to 401,
                             "error" to "Unauthorized",
-                            "message" to "You must provide a valid token."
-                        )
-                    ).encode()
-                )
+                            "message" to "You must provide a valid token."))
+                        .encode())
         } else {
             ctx.next()
         }
