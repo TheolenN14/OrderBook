@@ -16,7 +16,6 @@ class OrderBookService(
 ) {
     private val log = LoggerFactory.getLogger(OrderBookService::class.java)
 
-
     fun addOrder(order: Order) {
         synchronized(this) {
             when (order.type) {
@@ -56,10 +55,9 @@ class OrderBookService(
         }
     }
 
-
     private fun matchSellOrder(sellOrder: Order) {
         val candidateBuys = repository.getBuyOrderMap(sellOrder.currencyPair)
-            .tailMap(sellOrder.price, true)
+            .headMap(sellOrder.price, true)
 
         val iterator = candidateBuys.entries.iterator()
 

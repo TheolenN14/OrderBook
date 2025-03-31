@@ -6,4 +6,12 @@ data class Order(
     var quantity: Double,
     val type: OrderType,
     val currencyPair: String
-)
+){
+    override fun equals(other: Any?): Boolean {
+        return other is Order && other.orderId == this.orderId
+    }
+
+    override fun hashCode(): Int {
+        return orderId.hashCode()
+    }
+}
