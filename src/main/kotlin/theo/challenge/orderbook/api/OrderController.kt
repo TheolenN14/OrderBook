@@ -22,6 +22,14 @@ class OrderController(private val router: Router, private val orderBookService: 
     fun setupRoutes() {
         router.route().handler(BodyHandler.create())
 
+        //Health check
+        router.get("/healthz").handler { ctx ->
+            ctx.response()
+                .setStatusCode(200)
+                .putHeader("Content-Type", "application/json")
+                .end(JsonObject.mapFrom(mapOf("status" to "ok")).encode())
+        }
+
         // Logging middleware
         router.route().handler { ctx ->
             log.info("[${ctx.request().method()}] ${ctx.request().path()}")

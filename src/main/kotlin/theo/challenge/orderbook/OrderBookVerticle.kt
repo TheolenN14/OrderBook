@@ -1,6 +1,7 @@
 package theo.challenge.orderbook
 
 import io.vertx.core.AbstractVerticle
+import io.vertx.core.Promise
 import io.vertx.ext.web.Router
 import org.slf4j.LoggerFactory
 import theo.challenge.orderbook.api.OrderController
@@ -33,5 +34,10 @@ class OrderBookVerticle : AbstractVerticle() {
             .listen(8080)
             .onSuccess { log.info("Server started on port 8080") }
             .onFailure { log.error("Server failed to start", it) }
+    }
+
+    override fun stop(stopPromise: Promise<Void>) {
+        // Gracefully shut down
+        stopPromise.complete()
     }
 }

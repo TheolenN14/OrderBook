@@ -21,11 +21,12 @@ cd orderbookservice
 5. Server starts on port **8080**.
 
 ### 📡 API Endpoints
-| Method | Endpoint              | Description                      |
-|--------|------------------------|----------------------------------|
-| POST   | `/v1/orders/limit`     | Submit a limit order             |
-| GET    | `/v1/orderbook`        | View open orders                 |
-| GET    | `/v1/trades`           | View recent trade history        |
+| Method | Endpoint           | Description                |
+|--------|--------------------|----------------------------|
+| POST   | `/v1/orders/limit` | Submit a limit order       |
+| GET    | `/v1/orderbook`    | View open orders           |
+| GET    | `/v1/trades`       | View recent trade history  |
+| GET    | `healthz`          | View monitoring or metrics |
 
 - All endpoints require an `Authorization: Bearer secret-token` header.
 - POST endpoints require an `X-Signature: HMAC256` as ${price+currencyPair+quantity}
