@@ -28,6 +28,11 @@ class OrderController(private val router: Router, private val orderBookService: 
             ctx.next()
         }
 
+        //Response logging
+        router.route().last().handler { ctx ->
+            log.info("[${ctx.request().method()}] ${ctx.request().path()} → ${ctx.response().statusCode}")
+        }
+
         // Global error handler
         router.route().failureHandler { ctx ->
             val error = ctx.failure()?.message ?: "Internal Server Error"
@@ -63,33 +68,36 @@ class OrderController(private val router: Router, private val orderBookService: 
         router.post("/v1/orders/limit")
             .handler(SignatureMiddleware::handle)
             .handler { ctx ->
-            val body = ctx.body().asJsonObject()
-            val price = body.getDouble("price")
-            val quantity = body.getDouble("quantity")
-            val type = OrderType.from(body.getString("side"))
-            val currencyPair = body.getString("currencyPair")
-            val id = UUID.randomUUID().toString()
+                val body = ctx.body().asJsonObject()
+                val price = body.getDouble("price")
+                val quantity = body.getDouble("quantity")
+                val type = OrderType.from(body.getString("side"))
+                val currencyPair = body.getString("currencyPair")
+                val id = UUID.randomUUID().toString()
 
-            // *Potential to abstract handling and/or failures
-            if (currencyPair !in allowedPairs) {
-                ctx.response().setStatusCode(400).putHeader("Content-Type", "application/json")
-                    .end(JsonObject(
-                        mapOf(
-                            "status" to 400,
-                            "error" to "Currency pair not supported",
-                            "message" to "That currency pair isn't available yet, but we’re always expanding!",
-                            "allowedPairs" to allowedPairs
-                        )).encode())
+                // *Potential to abstract handling and/or failures
+                if (currencyPair !in allowedPairs) {
+                    ctx.response().setStatusCode(400).putHeader("Content-Type", "application/json")
+                        .end(
+                            JsonObject(
+                                mapOf(
+                                    "status" to 400,
+                                    "error" to "Currency pair not supported",
+                                    "message" to "That currency pair isn't available yet, but we’re always expanding!",
+                                    "allowedPairs" to allowedPairs
+                                )
+                            ).encode()
+                        )
+                }
+
+                val order = Order(id, price, quantity, type, currencyPair)
+                orderBookService.addOrder(order)
+
+                log.info("Accepted $type order: $id for $quantity @ $price")
+                ctx.response()
+                    .setStatusCode(201).putHeader("Content-Type", "application/json")
+                    .end(JsonObject(mapOf("orderId" to id, "status" to "accepted")).encode())
             }
-
-            val order = Order(id, price, quantity, type, currencyPair)
-            orderBookService.addOrder(order)
-
-            log.info("Accepted $type order: $id for $quantity @ $price")
-            ctx.response()
-                .setStatusCode(201).putHeader("Content-Type", "application/json")
-                .end(JsonObject(mapOf("orderId" to id, "status" to "accepted")).encode())
-        }
 
         /**
          * Handles GET /v1/orderbook

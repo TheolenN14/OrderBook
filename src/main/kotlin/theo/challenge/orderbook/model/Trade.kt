@@ -9,7 +9,7 @@ data class Trade(
     val price: Double,
     val quantity: Double,
     val quoteVolume: Double = price * quantity,
-    val currencyPair: String, // *Potential for validation via type
+    val currencyPair: String, // *Potential for validation via enum
     val tradedAt: Instant = Instant.now(),
     val takerSide: OrderType,
     val buyOrderId: String,
