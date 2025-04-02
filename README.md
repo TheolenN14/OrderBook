@@ -52,6 +52,7 @@ This service supports **real-time streaming of matched trades**
 | Partial order match                | ✅ Pass     |
 | Full order match                   | ✅ Pass     |
 | View order book with active orders | ✅ Pass     |
+| One to many trades                 | ✅ Pass     |  
 | View trade history                 | ✅ Pass     |
 | Auth and signature success         | ✅ Pass     |
 | Server error handling              | ✅ Pass     |
